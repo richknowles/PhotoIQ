@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PhotoIQ — Higgins Family Collection</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/app.css" />
+</head>
+<body>
+  <div id="app">
+
+    <!-- ── HEADER ─────────────────────────────────────────────────── -->
+    <header class="header">
+      <div class="header-left">
+        <div class="logo">
+          <span class="logo-icon">◈</span>
+          <span class="logo-text">PhotoIQ</span>
+        </div>
+        <div class="header-sub">Higgins Family Collection</div>
+      </div>
+      <div class="header-right">
+        <div class="stat-pill" id="stat-count">0 photos</div>
+        <div class="stat-pill" id="stat-selected" style="display:none">0 selected</div>
+        <button class="btn btn-ghost" id="btn-select-all">Select All</button>
+        <button class="btn btn-ghost" id="btn-deselect">Deselect</button>
+        <button class="btn btn-danger" id="btn-delete-selected" style="display:none">Delete Selected</button>
+        <button class="btn btn-primary" id="btn-export">Export &amp; Download</button>
+      </div>
+    </header>
+
+    <!-- ── DROP ZONE ──────────────────────────────────────────────── -->
+    <div class="dropzone" id="dropzone">
+      <div class="dropzone-inner">
+        <div class="dropzone-icon">⬡</div>
+        <div class="dropzone-title">Drop photos here</div>
+        <div class="dropzone-sub">or <label for="file-input" class="file-label">browse files</label></div>
+        <div class="dropzone-hint">JPG, PNG, TIFF, HEIC · Batch upload supported</div>
+      </div>
+      <input type="file" id="file-input" multiple accept="image/*" style="display:none" />
+    </div>
+
+    <!-- ── UPLOAD PROGRESS ────────────────────────────────────────── -->
+    <div class="upload-bar" id="upload-bar" style="display:none">
+      <div class="upload-bar-fill" id="upload-bar-fill"></div>
+      <span class="upload-bar-label" id="upload-bar-label">Uploading…</span>
+    </div>
+
+    <!-- ── TOOLBAR ────────────────────────────────────────────────── -->
+    <div class="toolbar" id="toolbar" style="display:none">
+      <div class="toolbar-left">
+        <label class="toolbar-label">Rename prefix</label>
+        <input class="toolbar-input" id="prefix-input" type="text" placeholder="e.g. HFC_" />
+        <label class="toolbar-label">Start #</label>
+        <input class="toolbar-input toolbar-input-sm" id="start-num" type="number" value="1" min="1" />
+        <label class="toolbar-label">Padding</label>
+        <select class="toolbar-select" id="pad-select">
+          <option value="3">001</option>
+          <option value="4" selected>0001</option>
+          <option value="5">00001</option>
+        </select>
+      </div>
+      <div class="toolbar-right">
+        <label class="toolbar-label">Watermark</label>
+        <label class="toggle">
+          <input type="checkbox" id="wm-toggle" checked />
+          <span class="toggle-track"></span>
+        </label>
+        <label class="toolbar-label">Opacity</label>
+        <input class="toolbar-input toolbar-input-sm" id="wm-opacity" type="number" value="35" min="1" max="100" />
+        <span class="toolbar-label">%</span>
+        <label class="toolbar-label">Scale</label>
+        <input class="toolbar-input toolbar-input-sm" id="wm-scale" type="number" value="22" min="5" max="60" />
+        <span class="toolbar-label">%</span>
+        <label class="toolbar-label">Angle</label>
+        <select class="toolbar-select" id="wm-angle">
+          <option value="0" selected>Straight</option>
+          <option value="345">Angled</option>
+          <option value="315">Steep</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- ── CONTACT SHEET ──────────────────────────────────────────── -->
+    <main class="contact-sheet" id="contact-sheet">
+      <div class="empty-state" id="empty-state">
+        <div class="empty-icon">◫</div>
+        <div class="empty-title">No photos loaded</div>
+        <div class="empty-sub">Drop photos above to begin</div>
+      </div>
+    </main>
+
+  </div>
+
+  <!-- ── LIGHTBOX ───────────────────────────────────────────────────── -->
+  <div class="lightbox" id="lightbox" style="display:none">
+    <div class="lightbox-backdrop" id="lb-backdrop"></div>
+    <div class="lightbox-panel">
+      <button class="lb-close" id="lb-close">✕</button>
+      <div class="lb-image-wrap">
+        <img class="lb-image" id="lb-image" src="" alt="" />
+      </div>
+      <div class="lb-meta">
+        <div class="lb-filename" id="lb-filename"></div>
+        <div class="lb-fields">
+          <label class="lb-label">Rename</label>
+          <input class="lb-input" id="lb-rename" type="text" placeholder="filename (no extension)" />
+          <label class="lb-label">Caption / Description</label>
+          <textarea class="lb-textarea" id="lb-caption" rows="3" placeholder="Enter caption for this photo…"></textarea>
+          <button class="btn btn-primary lb-save" id="lb-save">Save</button>
+          <button class="btn btn-danger lb-delete" id="lb-delete">Delete Photo</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EXPORT MODAL ───────────────────────────────────────────────── -->
+  <div class="modal-overlay" id="export-modal" style="display:none">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">Export Photos</span>
+        <button class="modal-close" id="export-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-stat" id="export-stat">Processing all photos</div>
+        <div class="modal-progress" id="export-progress" style="display:none">
+          <div class="modal-progress-fill" id="export-progress-fill"></div>
+        </div>
+        <div class="modal-actions" id="export-actions">
+          <button class="btn btn-primary" id="export-confirm">Export &amp; Download ZIP</button>
+          <button class="btn btn-ghost" id="export-cancel">Cancel</button>
+        </div>
+        <div id="export-done" style="display:none">
+          <div class="export-success">✓ Export complete</div>
+          <a class="btn btn-primary" id="export-download-link" href="#" download>Download ZIP</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TOAST ──────────────────────────────────────────────────────── -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

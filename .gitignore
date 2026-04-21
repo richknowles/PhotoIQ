@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+uploads/*
+!uploads/.gitkeep
+originals/*
+!originals/.gitkeep
+exports/*
+!exports/.gitkeep
+state.json
+.env
