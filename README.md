@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="docs/laurie-1956.jpg" width="320" alt="Laurie Ward, March 1956 — Higgins Family Collection" />
+<img src="docs/laurie-1956-watermarked.jpg" width="320" alt="Laurie Ward, March 1956 — Higgins Family Collection" />
 
 *Laurie Ward, March 1956 — Higgins Family Collection*
 
